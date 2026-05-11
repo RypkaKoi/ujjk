@@ -1,18 +1,122 @@
+
+#include <string>
+#include <cstdint>
+#include<sstream>
 #include <iostream>
-using namespace std;
-int main()
-{
-	setlocale(LC_ALL, "Russian");
-	int a, b, c, d, e;
-	cout << "Введите промежуток  a, b\n";
-	cin >> a;
-	cin >> b;
-	c = a;
-	while(c <= b){
-		if (b % c == 0) {
-			cout <<  c << ", ";
-}
-		c++;
+#include<algorithm>
+
+int getPrecedence(char op) {
+	//const char* cstr = str.op();
+	switch (op) {
+	case '+':
+	case '-':
+		return 1;
+	case '*':
+	case '/':
+		return 2;
+	default:
+		return 0;
 	}
-	return 0;
+}
+
+
+template <class T>
+struct Stack
+{
+	float resize_factor{ 1.5 };
+	size_t  top{ 0 };
+	size_t size{};
+	T* stack = nullptr;
+};
+
+
+template <class T>
+void init(Stack<T>& st, size_t size) {
+	st.size = size;
+	st.stack = new T[size];
+	st.top = 0;
+
+}
+
+template <class T>
+
+void clear(Stack<T>& st) {
+	st.top = 0;
+	delete[] st.stack;
+}
+
+template <class T>
+
+bool emty(Stack<T>& st) {
+	return(st.top == -1);
+
+}
+
+
+template <class T>
+
+T peek(Stack <T>& st) {
+
+	return (st.stack[st.top- 1]);
+
+}
+template <class T>
+void resize(Stack<T>& st, size_t len) {
+	if (len == st.size) return;
+
+	T *temp_arr = new T[len];
+	for (int i{ 0 }; i < std::min(len, st.size); ++i) {
+		temp[i] = st.stack[i];
+	}
+	delete[] st.stack
+	st.stack = temp_arr;
+	st.top = std::min(len, st.top);
+}
+
+template <class T>
+void push(Stack<T>& st, T temp) {
+	if (st.top > st.size) resize(Stack<T>&st, size_t st.size * st.resize_factor);
+		st.stack[st.top++] = temp;
+
+}
+
+
+template <class T>
+
+T pop(Stack <T>& st) {
+
+	return (st.stack[--st.top]);
+
+}
+
+template <class T>
+std::string Pol_str(std::string str, Stack<T>& suck) {
+	std::string temp;
+	for (int i{ 0 }; i < str.size(); ++i) {
+		if (std::isdigit(str[i])) temp += str[i];
+		else{
+			if (suck.top == 0|| suck.stack[top-1] == '(') push(suck, str[i]);
+			if (suck.str[i] == ')') {
+				while (top - 1 != '(') {
+					temp += pop(suck);
+				}
+				--top;
+			}
+			 if(getPrecedence(suck.stack[suck.top-1][0])< getPrecedence(str[i])) push(suck, str[i]);
+			 else {
+				 temp += pop(suck);
+				 push(suck, str[i]);
+			 }
+
+		}
+	}
+}
+
+int main() {
+	std::string str = "2 * 2 + 3 * ( 4 - 2 ) ^ 2";
+	int* temp = new int[1];
+	
+	Stack<std::string> a;
+	getPrecedence(a.stack[a.top - 1][0]);
+	init(a, 4);
 }

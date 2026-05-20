@@ -14,6 +14,8 @@ int getPrecedence(char op) {
 	case '*':
 	case '/':
 		return 2;
+	case'^':
+		return 3;
 	default:
 		return 0;
 	}
@@ -43,12 +45,14 @@ template <class T>
 void clear(Stack<T>& st) {
 	st.top = 0;
 	delete[] st.stack;
+	st.stack = nullptr;
+	st.size = 0;
 }
 
 template <class T>
 
 bool emty(Stack<T>& st) {
-	return(st.top == -1);
+	return(st.top == 0);
 
 }
 
@@ -66,16 +70,16 @@ void resize(Stack<T>& st, size_t len) {
 
 	T *temp_arr = new T[len];
 	for (int i{ 0 }; i < std::min(len, st.size); ++i) {
-		temp[i] = st.stack[i];
+		temp_arr[i] = st.stack[i];
 	}
-	delete[] st.stack
+	delete[] st.stack;
 	st.stack = temp_arr;
 	st.top = std::min(len, st.top);
 }
 
 template <class T>
 void push(Stack<T>& st, T temp) {
-	if (st.top > st.size) resize(Stack<T>&st, size_t st.size * st.resize_factor);
+	if (st.top >= st.size) resize(st,  st.size * st.resize_factor);
 		st.stack[st.top++] = temp;
 
 }
@@ -91,32 +95,39 @@ T pop(Stack <T>& st) {
 
 template <class T>
 std::string Pol_str(std::string str, Stack<T>& suck) {
-	std::string temp;
+	std:: string temp;
 	for (int i{ 0 }; i < str.size(); ++i) {
 		if (std::isdigit(str[i])) temp += str[i];
 		else{
-			if (suck.top == 0|| suck.stack[top-1] == '(') push(suck, str[i]);
-			if (suck.str[i] == ')') {
-				while (top - 1 != '(') {
+			if (suck.top == 0|| suck.stack[suck.top-1][0] == '(') push(suck, str.substr(i, 1));
+			if (str[i] == ')') {
+				while (suck.stack[suck.top-1][0] != '(') {
 					temp += pop(suck);
 				}
-				--top;
+				++i;
+				pop(suck);
 			}
-			 if(getPrecedence(suck.stack[suck.top-1][0])< getPrecedence(str[i])) push(suck, str[i]);
+			 if(getPrecedence(suck.stack[suck.top-1][0])< getPrecedence(str[i])) push(suck, str.substr(i, 1));
 			 else {
 				 temp += pop(suck);
-				 push(suck, str[i]);
+				 push(suck, str.substr(i, 1));
 			 }
 
 		}
 	}
+	while (suck.top > 0) {
+		temp += pop(suck);
+	}
+	return temp;
 }
 
 int main() {
-	std::string str = "2 * 2 + 3 * ( 4 - 2 ) ^ 2";
+	std::string str = "2*2+3*(4-2)^2";
 	int* temp = new int[1];
 	
 	Stack<std::string> a;
-	getPrecedence(a.stack[a.top - 1][0]);
 	init(a, 4);
+	std:: cout << Pol_str(str, a);
+
+	return 0;
 }

@@ -1,0 +1,36 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+
+struct Stack
+{
+	Node* first_node;
+};
+
+struct Node
+{
+	std::string str;
+	Node* next_node;
+};
+
+void push(const std::string& str, Stack& stack) {
+	Node* temp = stack.first_node;
+	Node* new_node = new Node;
+	(*new_node).str = str;
+	stack.first_node = new_node;
+	new_node->next_node = temp;
+}
+
+std::string peak(Stack stack) {
+	return stack.first_node->str;
+}
+
+std::string pop(Stack stack) {
+	if (stack.first_node = nullptr) return;
+	std::string temp_str = stack.first_node->str;
+	Node* temp_node = stack.first_node;
+	stack.first_node = stack.first_node->next_node;
+	delete temp_node;
+	return temp_str;
+}
+

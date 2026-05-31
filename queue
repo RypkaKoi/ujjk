@@ -1,0 +1,146 @@
+#include <string>
+#include <cstdint>
+#include<sstream>
+#include <iostream>
+#include<algorithm>
+
+int getPriority (const std::string& op) {
+	//const char* cstr = str.op();
+	if (op == "easy") return 1;
+	else if (op == "medium") return 2;
+	else if (op == "hard") return 3;
+	else return 0;
+	}
+
+
+struct Pacient
+{
+	std::string priority;
+	std::string Name;
+	size_t age;
+	
+};
+struct Quene
+{
+	Node* last_node{nullptr};
+	Node* first_node{ nullptr };
+	Node* last_hard{ nullptr };
+	Node* last_mid{ nullptr };
+	Node* last_easy{ nullptr };
+
+};
+
+struct Node
+{
+	Node* back_node{ nullptr };
+	Pacient* pacient;
+	Node* next_node{nullptr};
+};
+
+void push( Pacient* lox, Quene& stack) {
+	if (stack.first_node == nullptr) {
+		
+		Node* new_node = new Node;
+		new_node ->pacient = lox;
+		stack.first_node = new_node;
+		stack.last_node = new_node;
+	}
+	else {
+		switch (int priority = getPriority(lox->priority)) {
+		case 1:
+			if (stack.last_easy == nullptr) {
+				Node* temp = stack.last_node;
+				Node* new_node = new Node;
+				new_node->pacient = lox;
+				stack.last_easy = new_node;
+				new_node->next_node = temp;
+				stack.last_node = new_node;
+				temp->back_node = new_node;
+			}
+			else {
+				Node* temp = stack.last_easy;
+				Node* new_node = new Node;
+				new_node->pacient = lox;
+				stack.last_easy = new_node;
+				new_node->next_node = temp;
+				stack.last_node = new_node;
+				temp->back_node = new_node;
+			}
+			break;
+		case 2:
+			if (stack.last_mid == nullptr) {
+				if (stack.last_hard != nullptr) {
+					Node* temp = stack.last_hard;
+					Node* back_temp = stack.last_hard->back_node;
+					Node* new_node = new Node;
+					new_node->pacient = lox;
+					stack.last_mid = new_node;
+					new_node->next_node = temp;
+					new_node->back_node = back_temp;
+					temp->back_node = new_node;
+					back_temp->next_node = new_node;
+				}
+				else{
+					Node* temp = stack.first_node;
+					Node* new_node = new Node;
+					new_node->pacient = lox;
+					stack.last_mid = new_node;
+					new_node->back_node = temp;
+					temp->next_node = new_node;
+					stack.first_node = new_node;
+				}
+			}
+			else {
+				Node* temp = stack.last_mid;
+				Node* back_temp = stack.last_mid->back_node;
+				Node* new_node = new Node;
+				new_node->pacient = lox;
+				stack.last_mid = new_node;
+				new_node->next_node = temp;
+				new_node->back_node = back_temp;
+				temp->back_node = new_node;
+				back_temp->next_node = new_node;
+			}
+			break;
+		case 3:
+			if (stack.last_hard == nullptr) {
+				Node* temp = stack.first_node;
+				Node* new_node = new Node;
+				new_node->pacient = lox;
+				stack.last_hard = new_node;
+				new_node->back_node = temp;
+				stack.first_node = new_node;
+				temp->next_node = new_node;
+			}
+			else {
+				Node* temp = stack.last_hard;
+				Node* back_temp = stack.last_hard->back_node;
+				Node* new_node = new Node;
+				new_node->pacient = lox;
+				new_node->next_node = temp;
+				new_node->back_node = back_temp;
+				temp->back_node = new_node;
+				back_temp->next_node = new_node;
+				stack.last_hard = new_node;
+			}
+			break;
+
+		default: return;
+		}
+	} 
+
+}
+
+std::string peak(Quene stack) {
+	return stack.first_node->str;
+}
+
+std::string pop(Quene stack) {
+	if (stack.first_node == nullptr) return;
+	std::string temp_str = stack.first_node->str;
+	Node* temp_node = stack.first_node;
+	stack.first_node = stack.first_node->next_node;
+	delete temp_node;
+	return temp_str;
+}
+
